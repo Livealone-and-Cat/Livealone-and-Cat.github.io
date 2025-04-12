@@ -5,25 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UNKNOWN TECH.</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* 声明本地自定义字体 */
+    /* ========== 字体定义 ========== */
     @font-face {
       font-family: 'WYYDXHNO';
       src: url('./fonts/WYYDXHNO.woff2') format('woff2'),
            url('./fonts/WYYDXHNO.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
-      font-display: block;
+      font-display: swap;
     }
     
-    /* 基础变量定义 */
+    /* ========== 变量定义 ========== */
     :root {
       --bg-color: #0a0c1b;
       --text-color: #ffffff;
       --card-bg: linear-gradient(145deg, #1a1d3c, #0f1125);
       --navbar-bg: rgba(10, 12, 27, 0.98);
       --primary-color: #4fc3f7;
-      --title-gradient: linear-gradient(45deg, #4fc3f7, #8b80f9);
+      --title-gradient: linear-gradient(45deg, #4fc3f7 25%, #8b80f9 75%);
       --highlight-color: #4fc3f7;
       --border-color: rgba(79, 195, 247, 0.2);
       --icon-color: #ffffff;
@@ -31,150 +32,192 @@
       --nav-text-transform: uppercase;
       --nav-text-weight: 500;
       --nav-text-size: 0.95rem;
+      --star-count: 400;
     }
-    
-    /* 星空加载动画 */
+
+    /* ========== 加载动画 ========== */
     #loading-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to bottom, #000000, #0a0c1b);
+      background: radial-gradient(ellipse at bottom, #0d1e31 0%, #0a0c1b 100%);
       z-index: 9999;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: opacity 0.8s ease-out;
+      overflow: hidden;
+      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
-    .stars {
+
+    .starfield {
       position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
+      transform: rotateZ(45deg);
+      pointer-events: none;
     }
-    
+
     .star {
       position: absolute;
-      background: white;
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 50%;
-      animation: twinkle var(--duration) infinite ease-in-out;
-      opacity: 0;
+      animation: 
+        pulse 2s infinite ease-in-out,
+        drift linear infinite;
       will-change: transform, opacity;
     }
-    
-    @keyframes twinkle {
-      0%, 100% { opacity: 0; transform: scale(0.5); }
-      50% { opacity: var(--opacity); transform: scale(1); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1.2); }
     }
-    
+
+    @keyframes drift {
+      from { transform: translateY(-100vh) rotate(0deg); }
+      to { transform: translateY(100vh) rotate(360deg); }
+    }
+
     .loading-content {
+      position: relative;
+      z-index: 2;
       text-align: center;
-      z-index: 1;
       opacity: 0;
-      animation: fadeIn 2s forwards 0.5s;
+      animation: contentFadeIn 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
-    
+
+    @keyframes contentFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .loading-logo {
       font-size: 3rem;
       font-weight: bold;
-      margin-bottom: 1rem;
-      font-family: 'WYYDXHNO', sans-serif;
-      background: linear-gradient(45deg, #4fc3f7, #8b80f9);
+      margin-bottom: 1.5rem;
+      font-family: 'WYYDXHNO', 'Orbitron', sans-serif;
+      background: var(--title-gradient);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       letter-spacing: 2px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    
-    /* 进度条容器 */
+
     .progress-container {
-      width: 300px;
+      width: 320px;
       margin: 1.5rem auto;
     }
-    
-    /* 进度条文本 */
+
     .progress-text {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-family: 'WYYDXHNO', sans-serif;
+      margin-bottom: 0.8rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
     }
-    
-    /* 进度条样式 */
+
     .loading-bar {
       width: 100%;
-      height: 6px;
+      height: 8px;
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
+      border-radius: 4px;
       overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
     }
-    
+
     .loading-progress {
       height: 100%;
       width: 0;
-      background: linear-gradient(to right, #4fc3f7, #8b80f9);
-      border-radius: 3px;
-      transition: width 0.3s ease;
-    }
-    
-    /* 幻灯片式文字容器 */
-    .loading-messages {
-      height: 40px;
+      background: linear-gradient(
+        90deg,
+        rgba(79, 195, 247, 0.8) 0%,
+        rgba(139, 128, 249, 0.8) 100%
+      );
+      border-radius: 4px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      margin-top: 1rem;
-      width: 100%;
-      max-width: 400px;
     }
-    
+
+    .loading-progress::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+      );
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      100% { transform: translateX(100%); }
+    }
+
+    .loading-messages {
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
     .loading-message {
       position: absolute;
       width: 100%;
       text-align: center;
       opacity: 0;
       transform: translateY(20px);
-      transition: all 0.5s ease;
-      font-family: 'WYYDXHNO', sans-serif;
-      font-size: 1rem;
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
     }
-    
+
     .loading-message.active {
       opacity: 1;
       transform: translateY(0);
+      animation: textGlow 1.5s ease-in-out infinite;
     }
-    
-    /* 强制全局使用自定义字体但保留图标 */
-    body, button, input, select, textarea {
-      font-family: 'WYYDXHNO', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+
+    @keyframes textGlow {
+      0%, 100% { text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); }
+      50% { text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); }
     }
-    
-    /* 确保图标不受影响 */
-    .fa, .fas, .far, .fal, .fab {
-      font-family: 'Font Awesome 6 Free' !important;
-    }
-    
-    /* 基础样式 */
+
+    /* ========== 基础样式 ========== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
-    
-    /* 全局字体设置 */
+
     body {
       background: var(--bg-color);
       color: var(--text-color);
       line-height: 1.6;
       padding-top: 80px;
+      font-family: 'WYYDXHNO', 'Orbitron', -apple-system, BlinkMacSystemFont, 
+                   "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    
-    /* 导航栏 */
+
+    /* 确保图标不受影响 */
+    .fa, .fas, .far, .fal, .fab {
+      font-family: 'Font Awesome 6 Free' !important;
+    }
+
+    /* ========== 导航栏 ========== */
     .navbar {
       position: fixed;
       top: 0;
@@ -193,22 +236,21 @@
       transform: translateY(-20px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
-    
+
     body.loaded .navbar {
       opacity: 1;
       transform: translateY(0);
     }
-    
-    /* 公司LOGO */
+
     .logo {
       font-size: 1.8rem;
       font-weight: bold;
       color: var(--text-color);
       letter-spacing: 1px;
       text-transform: uppercase;
+      font-family: 'WYYDXHNO', 'Orbitron', sans-serif;
     }
-    
-    /* 导航菜单 */
+
     .nav-links {
       display: flex;
       gap: 2.5rem;
@@ -216,7 +258,7 @@
       margin-right: 80px;
       align-items: center;
     }
-    
+
     .nav-links a {
       color: var(--text-color);
       text-decoration: none;
@@ -229,8 +271,7 @@
       text-transform: var(--nav-text-transform);
       transition: all 0.3s ease;
     }
-    
-    /* 导航下划线动画 */
+
     .nav-links a::after {
       content: '';
       position: absolute;
@@ -242,17 +283,16 @@
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
       transform-origin: left center;
     }
-    
+
     .nav-links a:hover::after,
     .nav-links a.active::after {
       width: 100%;
     }
-    
+
     .nav-links a.active {
       color: var(--primary-color);
     }
-    
-    /* 主题切换按钮 */
+
     .theme-toggle {
       position: absolute;
       right: 20px;
@@ -273,155 +313,214 @@
       border: 1px solid var(--border-color);
       letter-spacing: 0.5px;
       text-transform: none;
+      font-family: 'Orbitron', sans-serif;
     }
-    
+
     .theme-toggle:hover {
       background: rgba(79, 195, 247, 0.2);
     }
-    
-    /* 主要内容区域 */
+
+    /* ========== 主要内容 ========== */
     .section {
-      padding: 4rem 2rem;
+      padding: 5rem 2rem;
       max-width: 1200px;
       margin: 0 auto;
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.8s ease, transform 0.8s ease;
     }
-    
+
     body.loaded .section {
       opacity: 1;
       transform: translateY(0);
     }
-    
-    /* 首页标题特效 */
+
     .hero-text {
       text-align: center;
-      padding: 6rem 0;
+      padding: 8rem 0;
     }
-    
+
     .hero-text h2 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
+      font-size: 2.2rem;
+      margin-bottom: 0.8rem;
       opacity: 0.8;
       letter-spacing: 1px;
     }
-    
+
     .hero-text h1 {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
+      font-size: 4.5rem;
+      margin-bottom: 2rem;
       background: var(--title-gradient);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      text-shadow: 0 2px 15px rgba(0,0,0,0.3);
       line-height: 1.2;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
+      font-family: 'WYYDXHNO', 'Orbitron', sans-serif;
     }
-    
+
     .hero-text p {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       opacity: 0.9;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    
-    /* 高亮文本 */
+
     .highlight {
       font-weight: bold;
       color: var(--highlight-color);
+      text-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
     }
-    
-    /* 产品网格 */
+
+    /* ========== 产品网格 ========== */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
+      gap: 2.5rem;
+      margin-top: 4rem;
     }
-    
-    /* 产品卡片 */
+
     .product-card {
       background: var(--card-bg);
-      border-radius: 15px;
-      padding: 2rem;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: all 0.3s;
+      border-radius: 18px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(79, 195, 247, 0.1) 0%,
+        transparent 50%,
+        rgba(139, 128, 249, 0.1) 100%
+      );
+      transform: rotate(30deg);
+      z-index: 0;
+    }
+
     .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      border-color: rgba(79, 195, 247, 0.4);
     }
-    
+
     .product-card img {
       width: 100%;
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
       border: 1px solid var(--border-color);
       aspect-ratio: 16/9;
       object-fit: cover;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.5s ease;
     }
-    
-    /* 产品名称 */
+
+    .product-card:hover img {
+      transform: scale(1.03);
+    }
+
     .product-card h3 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      margin-bottom: 1.2rem;
       color: var(--highlight-color);
       letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
     }
-    
+
     .product-card p {
       min-height: 3.6em;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
     }
-    
-    /* 操作按钮 */
+
     .action-buttons {
       display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
-    
+
     .btn {
-      padding: 0.8rem 1.5rem;
-      border-radius: 30px;
+      padding: 1rem 1.8rem;
+      border-radius: 35px;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.95rem;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      font-size: 1rem;
       border: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      min-width: 140px;
+      gap: 0.8rem;
+      min-width: 160px;
       text-align: center;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      font-family: 'Orbitron', sans-serif;
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0.3) 0%,
+        rgba(255,255,255,0) 60%
+      );
+      transform: rotate(30deg);
+      transition: all 0.5s ease;
+    }
+
+    .btn:hover::after {
+      transform: translateX(100%) rotate(30deg);
+    }
+
     .btn-primary {
       background: var(--primary-color);
       color: var(--bg-color);
+      box-shadow: 0 4px 15px rgba(79, 195, 247, 0.3);
     }
-    
+
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(79, 195, 247, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(79, 195, 247, 0.5);
     }
-    
+
     .btn-secondary {
       background: transparent;
       color: var(--primary-color);
       border: 2px solid var(--primary-color);
     }
-    
+
     .btn-secondary:hover {
       background: rgba(79, 195, 247, 0.1);
+      box-shadow: 0 4px 15px rgba(79, 195, 247, 0.2);
     }
-    
-    /* 弹窗样式 */
+
+    /* ========== 弹窗样式 ========== */
     .modal {
       display: none;
       position: fixed;
@@ -429,126 +528,212 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.9);
       z-index: 2000;
       justify-content: center;
       align-items: center;
       padding: 2rem;
+      backdrop-filter: blur(5px);
     }
-    
+
     .modal-content {
       background: var(--card-bg);
-      border-radius: 15px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 700px;
-      max-height: 80vh;
+      max-width: 800px;
+      max-height: 85vh;
       position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transform: scale(0);
+      transform: scale(0.8);
       opacity: 0;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    
+
+    .modal.show .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
     .modal-header {
-      padding: 1.5rem 2rem;
+      padding: 1.8rem 2.5rem;
       border-bottom: 1px solid var(--border-color);
       position: relative;
+      background: rgba(10, 12, 27, 0.7);
     }
-    
+
     .modal-header h3 {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      letter-spacing: 0.5px;
+      gap: 0.8rem;
+      letter-spacing: 0.8px;
+      font-size: 1.5rem;
+      color: var(--primary-color);
     }
-    
+
     .modal-body {
-      padding: 1.5rem 2rem;
+      padding: 2rem 2.5rem;
       overflow-y: auto;
       flex-grow: 1;
     }
-    
+
     .close-btn {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
-      font-size: 1.5rem;
+      top: 1.2rem;
+      right: 1.2rem;
+      font-size: 1.8rem;
       cursor: pointer;
       background: none;
       border: none;
       color: var(--text-color);
       transition: all 0.3s;
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
+      z-index: 1;
     }
-    
+
     .close-btn:hover {
       background: rgba(255,255,255,0.1);
       color: var(--primary-color);
       transform: rotate(90deg);
     }
-    
-    /* 配置列表样式 */
+
+    /* ========== 配置列表 ========== */
     .specs-list {
       list-style: none;
-      margin-top: 0.5rem;
+      margin-top: 1rem;
     }
-    
+
     .specs-list li {
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
       display: flex;
       align-items: flex-start;
-      line-height: 1.6;
+      line-height: 1.7;
     }
-    
+
     .specs-list i {
-      margin-right: 1rem;
+      margin-right: 1.2rem;
       color: var(--primary-color);
-      width: 24px;
+      width: 26px;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       flex-shrink: 0;
+      margin-top: 0.2rem;
     }
-    
+
     .specs-list strong {
       display: inline-block;
-      min-width: 90px;
-      margin-right: 0.5rem;
+      min-width: 100px;
+      margin-right: 0.8rem;
       flex-shrink: 0;
+      font-weight: bold;
     }
-    
+
     .specs-sublist {
       list-style: none;
-      margin-left: 2rem;
-      margin-top: 0.5rem;
+      margin-left: 2.5rem;
+      margin-top: 0.8rem;
     }
-    
+
     .specs-sublist li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
       position: relative;
-      padding-left: 1.5rem;
+      padding-left: 1.8rem;
     }
-    
+
     .specs-sublist li::before {
-      content: "•";
+      content: "›";
       color: var(--primary-color);
       position: absolute;
       left: 0;
+      font-weight: bold;
     }
-    
-    /* 响应式设计 */
+
+    /* ========== 自定义弹窗 ========== */
+    .custom-alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 3000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .alert-content {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 2.5rem;
+      max-width: 450px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transform: scale(0.9);
+      animation: scaleIn 0.3s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes scaleIn {
+      to { transform: scale(1); }
+    }
+
+    .alert-content i {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .alert-content h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .alert-content p {
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .alert-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* ========== 响应式设计 ========== */
+    @media (max-width: 992px) {
+      .hero-text h1 {
+        font-size: 3.5rem;
+      }
+      
+      .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
+
     @media (max-width: 768px) {
       .navbar {
         flex-wrap: wrap;
         padding: 1rem;
-        padding-right: 80px;
+        padding-right: 90px;
       }
       
       .nav-links {
@@ -570,16 +755,24 @@
         top: 1rem;
         transform: none;
         font-size: 0.9rem;
-        padding: 0.5rem;
+        padding: 0.5rem 0.8rem;
         z-index: 1003;
       }
       
+      .hero-text {
+        padding: 5rem 0;
+      }
+      
       .hero-text h1 {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
       }
       
       .hero-text h2 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+      }
+      
+      .hero-text p {
+        font-size: 1.3rem;
       }
       
       .product-grid {
@@ -599,15 +792,49 @@
       }
       
       .loading-logo {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
       
       .progress-container {
-        width: 250px;
+        width: 280px;
       }
       
       .loading-messages {
-        height: 60px;
+        height: 80px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-text h1 {
+        font-size: 2.2rem;
+      }
+      
+      .hero-text h2 {
+        font-size: 1.3rem;
+      }
+      
+      .section {
+        padding: 3rem 1.5rem;
+      }
+      
+      .product-card {
+        padding: 1.8rem;
+      }
+      
+      .modal-header, .modal-body {
+        padding: 1.5rem;
+      }
+      
+      .specs-list li {
+        flex-direction: column;
+      }
+      
+      .specs-list strong {
+        margin-bottom: 0.3rem;
+      }
+      
+      .specs-sublist {
+        margin-left: 1.5rem;
       }
     }
   </style>
@@ -615,14 +842,13 @@
 <body>
   <!-- 星空加载动画 -->
   <div id="loading-screen">
-    <div class="stars" id="stars"></div>
+    <div class="starfield" id="starfield"></div>
     <div class="loading-content">
       <div class="loading-logo">UNKNOWN TECH.</div>
       
-      <!-- 进度条容器 -->
       <div class="progress-container">
         <div class="progress-text">
-          <span>加载中...</span>
+          <span>系统初始化</span>
           <span id="progressPercent">0%</span>
         </div>
         <div class="loading-bar">
@@ -630,12 +856,11 @@
         </div>
       </div>
       
-      <!-- 幻灯片式文字容器 -->
       <div class="loading-messages" id="loadingMessages">
-        <div class="loading-message active">正在初始化系统...</div>
-        <div class="loading-message">加载核心模块...</div>
-        <div class="loading-message">准备用户界面...</div>
-        <div class="loading-message">即将完成...</div>
+        <div class="loading-message active">正在唤醒量子核心...</div>
+        <div class="loading-message">加载光子矩阵...</div>
+        <div class="loading-message">校准时空曲率...</div>
+        <div class="loading-message">连接虚空网络...</div>
       </div>
     </div>
   </div>
@@ -649,7 +874,9 @@
       <a href="#about">关于</a>
       <a href="#contact">联系</a>
     </div>
-    <button class="theme-toggle" id="themeToggle">🌗 自动模式</button>
+    <button class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i> 暗黑模式
+    </button>
   </nav>
   
   <!-- 首页 -->
@@ -667,30 +894,39 @@
     <div class="product-grid">
       <!-- 手机产品 -->
       <div class="product-card">
-        <img src="images/phone.jpg" alt="UNKNOWN MACHINE 01">
+        <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="UNKNOWN MACHINE 01">
         <h3>UNKNOWN MACHINE 01</h3>
         <p>高性能星空摄影手机，由瑞芯微RK3688芯片驱动</p>
         <div class="action-buttons">
           <button class="btn btn-primary" onclick="showAlert()">
             <i class="fas fa-shopping-cart"></i> 拿下它
           </button>
-          <button class="btn btn-secondary" onclick="showModal(event)">
+          <button class="btn btn-secondary" onclick="showModal()">
             <i class="fas fa-info-circle"></i> 详细配置
-          </button>
-          <button class="btn btn-secondary">
-            <i class="fas fa-book"></i> 了解更多
           </button>
         </div>
       </div>
       
       <!-- 操作系统产品 -->
       <div class="product-card">
-        <img src="images/os.jpg" alt="UNKNOWN OS 1">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="UNKNOWN OS 1">
         <h3>UNKNOWN OS 1</h3>
         <p>强劲高能，直觉美学<br>基于Android 15打造</p>
         <div class="action-buttons">
           <button class="btn btn-secondary">
-            <i class="fas fa-book"></i> 了解更多
+            <i class="fas fa-download"></i> 下载体验
+          </button>
+        </div>
+      </div>
+      
+      <!-- 智能手表产品 -->
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="UNKNOWN WATCH">
+        <h3>UNKNOWN WATCH</h3>
+        <p>为极客打造的智能手表，支持脑电波控制</p>
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="showAlert()">
+            <i class="fas fa-shopping-cart"></i> 立即购买
           </button>
         </div>
       </div>
@@ -700,16 +936,51 @@
   <!-- 关于我们 -->
   <section id="about" class="section">
     <h2>关于 UNKNOWN TECH.</h2>
-    <p>我们专注于打破常规，打造极客喜欢的手机、操作系统和你女神会喜欢的智能穿戴设备。</p>
+    <p>我们是一家由年轻极客创立的科技公司，专注于打造突破常规的智能设备。我们的团队由来自全球的工程师、设计师和梦想家组成，致力于将科幻变为现实。</p>
+    <div class="product-grid" style="margin-top: 3rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+      <div class="product-card">
+        <i class="fas fa-bolt" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1.5rem;"></i>
+        <h3>创新驱动</h3>
+        <p>我们不断挑战技术极限，每年研发投入占比超过40%</p>
+      </div>
+      <div class="product-card">
+        <i class="fas fa-globe" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1.5rem;"></i>
+        <h3>全球视野</h3>
+        <p>产品已销往全球72个国家，服务超过500万用户</p>
+      </div>
+      <div class="product-card">
+        <i class="fas fa-heart" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1.5rem;"></i>
+        <h3>用户至上</h3>
+        <p>我们倾听每一位用户的声音，持续优化产品体验</p>
+      </div>
+    </div>
   </section>
   
   <!-- 联系方式 -->
   <section id="contact" class="section">
     <h2>联系我们</h2>
-    <address>
-      <p><i class="fas fa-map-marker-alt"></i> 地址：宇宙银河系太阳系地月系地球亚洲东亚中华人民共和国福建省福州市</p>
-      <p><i class="fas fa-envelope"></i> 邮箱（CEO's）：livealoneandcat@163.com</p>
-    </address>
+    <div class="product-grid" style="grid-template-columns: 1fr 1fr; gap: 3rem;">
+      <div class="product-card">
+        <h3><i class="fas fa-map-marker-alt"></i> 公司地址</h3>
+        <p>宇宙银河系太阳系地月系地球亚洲东亚中华人民共和国福建省福州市</p>
+        <div class="action-buttons">
+          <button class="btn btn-secondary" onclick="navigateToMap()">
+            <i class="fas fa-map"></i> 查看地图
+          </button>
+        </div>
+      </div>
+      <div class="product-card">
+        <h3><i class="fas fa-envelope"></i> 电子邮箱</h3>
+        <p>商务合作: business@unknowntech.com</p>
+        <p>技术支持: support@unknowntech.com</p>
+        <p>CEO邮箱: livealoneandcat@163.com</p>
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="sendEmail()">
+            <i class="fas fa-paper-plane"></i> 发送邮件
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
   
   <!-- 配置弹窗 -->
@@ -791,203 +1062,190 @@
   </div>
   
   <script>
-    // 创建星空背景 - 增加星星密度到300颗
-    function createStars() {
-      const starsContainer = document.getElementById('stars');
-      const starsCount = 300;
+    // ========== 加载动画 ==========
+    function createStarfield() {
+      const container = document.getElementById('starfield');
+      const starCount = Math.floor(window.innerWidth * window.innerHeight / 800);
       
-      for (let i = 0; i < starsCount; i++) {
+      for (let i = 0; i < starCount; i++) {
         const star = document.createElement('div');
         star.className = 'star';
         
-        const size = Math.random() * 2 + 1;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
+        // 随机属性
+        const size = Math.random() * 3;
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        const duration = 10 + Math.random() * 30;
+        const delay = Math.random() * -30;
+        const opacity = Math.random() * 0.7 + 0.3;
         
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.top = `${Math.random() * 100}%`;
+        star.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}%;
+          top: ${y}%;
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+          opacity: ${opacity};
+        `;
         
-        const duration = `${Math.random() * 3 + 2}s`;
-        const delay = `${Math.random() * 5}s`;
-        const opacity = Math.random() * 0.8 + 0.2;
-        
-        star.style.setProperty('--duration', duration);
-        star.style.setProperty('--opacity', opacity);
-        star.style.animationDelay = delay;
-        
-        starsContainer.appendChild(star);
+        container.appendChild(star);
       }
     }
-    
-    // 幻灯片式文字切换
-    function initMessageSlider() {
+
+    // 增强进度加载系统
+    let currentProgress = 0;
+    const progressSteps = [
+      { percent: 15, message: "启动量子纠缠..." },
+      { percent: 35, message: "编译时空协议..." },
+      { percent: 65, message: "生成反物质界面..." },
+      { percent: 85, message: "校准用户维度..." },
+      { percent: 100, message: "准备就绪！" }
+    ];
+
+    function updateProgress() {
+      if (currentProgress >= 100) {
+        document.body.classList.add('loaded');
+        document.getElementById('loading-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loading-screen').remove();
+        }, 1200);
+        return;
+      }
+
+      const nextStep = progressSteps.find(step => step.percent > currentProgress);
+      if (nextStep) {
+        currentProgress = nextStep.percent;
+        document.getElementById('progressPercent').textContent = 
+          `${currentProgress}%`;
+        document.getElementById('loadingProgress').style.width = 
+          `${currentProgress}%`;
+        
+        // 更新消息
+        const messages = document.querySelectorAll('.loading-message');
+        const currentIndex = Array.from(messages).findIndex(msg => 
+          msg.classList.contains('active'));
+        const nextIndex = (currentIndex + 1) % messages.length;
+        
+        messages.forEach(msg => msg.classList.remove('active'));
+        messages[nextIndex].textContent = nextStep.message;
+        messages[nextIndex].classList.add('active');
+        
+        // 动态调整速度
+        const speed = currentProgress < 50 ? 600 : 400;
+        setTimeout(updateProgress, speed + Math.random() * 200);
+      }
+    }
+
+    // 消息切换系统
+    function initMessageSystem() {
       const messages = document.querySelectorAll('.loading-message');
-      let currentIndex = 0;
+      let index = 0;
       
-      function showNextMessage() {
-        messages[currentIndex].classList.remove('active');
-        currentIndex = (currentIndex + 1) % messages.length;
-        messages[currentIndex].classList.add('active');
-      }
-      
-      setInterval(showNextMessage, 3000);
+      setInterval(() => {
+        messages.forEach(msg => msg.classList.remove('active'));
+        messages[index].classList.add('active');
+        index = (index + 1) % messages.length;
+      }, 3000);
     }
-    
-    // 模拟加载进度
-    function simulateLoading() {
-      const progressBar = document.getElementById('loadingProgress');
-      const progressPercent = document.getElementById('progressPercent');
-      let progress = 0;
-      
-      const interval = setInterval(() => {
-        progress += Math.random() * 10;
-        if (progress > 100) progress = 100;
-        
-        progressBar.style.width = `${progress}%`;
-        progressPercent.textContent = `${Math.floor(progress)}%`;
-        
-        if (progress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            document.getElementById('loading-screen').style.opacity = '0';
-            setTimeout(() => {
-              document.getElementById('loading-screen').style.display = 'none';
-              document.body.classList.add('loaded');
-            }, 800);
-          }, 500);
-        }
-      }, 200);
-    }
-    
-    // 页面加载完成后初始化
-    window.addEventListener('DOMContentLoaded', () => {
-      createStars();
-      initMessageSlider();
-      simulateLoading();
-      
-      const navLinks = document.querySelectorAll('.nav-links a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          navLinks.forEach(l => l.classList.remove('active'));
-          this.classList.add('active');
-        });
-      });
-    });
-    
-    // 滚动时高亮对应菜单项
-    window.addEventListener('scroll', function() {
-      const sections = document.querySelectorAll('.section');
-      const navLinks = document.querySelectorAll('.nav-links a');
-      
-      let current = '';
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (pageYOffset >= sectionTop - 200) {
-          current = section.getAttribute('id');
-        }
-      });
-      
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-          link.classList.add('active');
-        }
-      });
-    });
-    
-    // 主题切换功能
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    const navbar = document.querySelector('.navbar');
-    
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    let currentTheme = localStorage.getItem('theme') || 'auto';
-    applyTheme(currentTheme);
-    
-    themeToggle.addEventListener('click', () => {
-      if (currentTheme === 'auto') {
-        currentTheme = 'light';
-      } else if (currentTheme === 'light') {
-        currentTheme = 'dark';
-      } else {
-        currentTheme = 'auto';
-      }
-      applyTheme(currentTheme);
-      localStorage.setItem('theme', currentTheme);
-    });
-    
-    function applyTheme(theme) {
-      if (theme === 'auto') {
-        if (systemPrefersDark) {
-          setDarkTheme();
-        } else {
-          setLightTheme();
-        }
-        themeToggle.innerHTML = '<i class="fas fa-adjust"></i> 自动模式';
-      } else if (theme === 'light') {
-        setLightTheme();
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
-      } else {
-        setDarkTheme();
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
-      }
-    }
-    
-    function setLightTheme() {
-      html.setAttribute('data-theme', 'light');
-      navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-      navbar.style.color = '#2d3436';
-    }
-    
-    function setDarkTheme() {
-      html.setAttribute('data-theme', 'dark');
-      navbar.style.background = 'rgba(10, 12, 27, 0.98)';
-      navbar.style.color = '#ffffff';
-    }
-    
-    // 显示提示信息
+
+    // ========== 页面交互 ==========
     function showAlert() {
-      alert("功能开发中，敬请期待！");
+      const alertBox = document.createElement('div');
+      alertBox.className = 'custom-alert';
+      alertBox.innerHTML = `
+        <div class="alert-content">
+          <i class="fas fa-rocket"></i>
+          <h3>准备跃迁！</h3>
+          <p>即将开启量子购物通道</p>
+          <div class="alert-buttons">
+            <button class="btn btn-primary" onclick="this.parentElement.parentElement.parentElement.remove()">
+              确认跃迁
+            </button>
+            <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">
+              取消
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(alertBox);
     }
-    
-    // 显示弹窗
-    function showModal(event) {
+
+    function showModal() {
       const modal = document.getElementById('configModal');
-      const modalContent = modal.querySelector('.modal-content');
-      const buttonRect = event.currentTarget.getBoundingClientRect();
-      const buttonCenterX = buttonRect.left + buttonRect.width / 2;
-      const buttonCenterY = buttonRect.top + buttonRect.height / 2;
-      
-      modalContent.style.transformOrigin = `${buttonCenterX}px ${buttonCenterY}px`;
       modal.style.display = 'flex';
-      modalContent.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s';
-      modalContent.style.transform = 'scale(0)';
-      modalContent.style.opacity = '0';
       
-      void modalContent.offsetWidth;
-      
-      modalContent.style.transform = 'scale(1)';
-      modalContent.style.opacity = '1';
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 10);
     }
-    
-    // 关闭弹窗
+
     function closeModal() {
       const modal = document.getElementById('configModal');
-      const modalContent = modal.querySelector('.modal-content');
-      
-      modalContent.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s';
-      modalContent.style.transform = 'scale(0)';
-      modalContent.style.opacity = '0';
-      modal.style.transition = 'background 0.3s';
-      modal.style.background = 'rgba(0,0,0,0)';
+      modal.classList.remove('show');
       
       setTimeout(() => {
         modal.style.display = 'none';
-        modal.style.background = 'rgba(0,0,0,0.8)';
-      }, 300);
+      }, 500);
     }
+
+    function navigateToMap() {
+      alert("导航功能将在正式版中开放");
+    }
+
+    function sendEmail() {
+      window.location.href = "mailto:business@unknowntech.com";
+    }
+
+    // 主题切换功能
+    function initThemeToggle() {
+      const toggleBtn = document.getElementById('themeToggle');
+      let isDark = true;
+      
+      toggleBtn.addEventListener('click', () => {
+        isDark = !isDark;
+        if (isDark) {
+          document.documentElement.style.setProperty('--bg-color', '#0a0c1b');
+          document.documentElement.style.setProperty('--text-color', '#ffffff');
+          toggleBtn.innerHTML = '<i class="fas fa-moon"></i> 暗黑模式';
+        } else {
+          document.documentElement.style.setProperty('--bg-color', '#f5f7ff');
+          document.documentElement.style.setProperty('--text-color', '#0a0c1b');
+          toggleBtn.innerHTML = '<i class="fas fa-sun"></i> 明亮模式';
+        }
+      });
+    }
+
+    // ========== 初始化 ==========
+    document.addEventListener('DOMContentLoaded', () => {
+      createStarfield();
+      initMessageSystem();
+      initThemeToggle();
+      
+      // 延迟启动进度条以等待字体加载
+      setTimeout(updateProgress, 1500);
+      
+      // 平滑滚动
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+      
+      // 触摸设备检测
+      document.body.classList.toggle('touch-device', 
+        'ontouchstart' in window || navigator.maxTouchPoints > 0);
+    });
+
+    // 监听窗口变化重新生成星空
+    window.addEventListener('resize', () => {
+      const starfield = document.getElementById('starfield');
+      starfield.innerHTML = '';
+      createStarfield();
+    });
   </script>
 </body>
 </html>
