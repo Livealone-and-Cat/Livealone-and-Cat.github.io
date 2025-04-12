@@ -16,7 +16,7 @@
       font-display: block;
     }
     
-    /* 基础变量定义 - 暗色模式 */
+    /* 基础变量定义 */
     :root {
       --bg-color: #0a0c1b;
       --text-color: #ffffff;
@@ -31,19 +31,6 @@
       --nav-text-transform: uppercase;
       --nav-text-weight: 500;
       --nav-text-size: 0.95rem;
-    }
-
-    /* 亮色模式变量 */
-    [data-theme="light"] {
-      --bg-color: #f5f7ff;
-      --text-color: #0a0c1b;
-      --card-bg: linear-gradient(145deg, #e6e9ff, #d9dcf5);
-      --navbar-bg: rgba(245, 247, 255, 0.98);
-      --primary-color: #0077cc;
-      --title-gradient: linear-gradient(45deg, #0077cc, #5e5cd3);
-      --highlight-color: #0077cc;
-      --border-color: rgba(0, 119, 204, 0.2);
-      --icon-color: #0a0c1b;
     }
     
     /* 星空加载动画 */
@@ -77,6 +64,7 @@
       border-radius: 50%;
       animation: twinkle var(--duration) infinite ease-in-out;
       opacity: 0;
+      will-change: transform, opacity;
     }
     
     @keyframes twinkle {
@@ -89,10 +77,6 @@
       z-index: 1;
       opacity: 0;
       animation: fadeIn 2s forwards 0.5s;
-    }
-    
-    @keyframes fadeIn {
-      to { opacity: 1; }
     }
     
     .loading-logo {
@@ -136,32 +120,6 @@
       background: linear-gradient(to right, #4fc3f7, #8b80f9);
       border-radius: 3px;
       transition: width 0.3s ease;
-    }
-    
-    /* 幻灯片式文字容器 */
-    .loading-messages {
-      height: 40px;
-      position: relative;
-      overflow: hidden;
-      margin-top: 1rem;
-      width: 100%;
-      max-width: 400px;
-    }
-    
-    .loading-message {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.5s ease;
-      font-family: 'WYYDXHNO', sans-serif;
-      font-size: 1rem;
-    }
-    
-    .loading-message.active {
-      opacity: 1;
-      transform: translateY(0);
     }
     
     /* 强制全局使用自定义字体但保留图标 */
@@ -466,12 +424,6 @@
       overflow: hidden;
       transform: scale(0);
       opacity: 0;
-      transition: all 0.3s ease;
-    }
-    
-    .modal.show .modal-content {
-      transform: scale(1);
-      opacity: 1;
     }
     
     .modal-header {
@@ -627,10 +579,6 @@
       .progress-container {
         width: 250px;
       }
-      
-      .loading-messages {
-        height: 60px;
-      }
     }
   </style>
 </head>
@@ -651,14 +599,6 @@
           <div class="loading-progress" id="loadingProgress"></div>
         </div>
       </div>
-      
-      <!-- 幻灯片式文字容器 -->
-      <div class="loading-messages" id="loadingMessages">
-        <div class="loading-message active">正在初始化系统...</div>
-        <div class="loading-message">加载核心模块...</div>
-        <div class="loading-message">准备用户界面...</div>
-        <div class="loading-message">即将完成...</div>
-      </div>
     </div>
   </div>
   
@@ -671,9 +611,7 @@
       <a href="#about">关于</a>
       <a href="#contact">联系</a>
     </div>
-    <button class="theme-toggle" id="themeToggle">
-      <i class="fas fa-moon"></i> 暗色模式
-    </button>
+    <button class="theme-toggle" id="themeToggle">🌗 自动模式</button>
   </nav>
   
   <!-- 首页 -->
@@ -698,8 +636,11 @@
           <button class="btn btn-primary" onclick="showAlert()">
             <i class="fas fa-shopping-cart"></i> 拿下它
           </button>
-          <button class="btn btn-secondary" onclick="showModal()">
+          <button class="btn btn-secondary" onclick="showModal(event)">
             <i class="fas fa-info-circle"></i> 详细配置
+          </button>
+          <button class="btn btn-secondary">
+            <i class="fas fa-book"></i> 了解更多
           </button>
         </div>
       </div>
@@ -815,7 +756,7 @@
     // 创建星空背景
     function createStars() {
       const starsContainer = document.getElementById('stars');
-      const starsCount = 200;
+      const starsCount = 300;
       
       for (let i = 0; i < starsCount; i++) {
         const star = document.createElement('div');
@@ -839,125 +780,79 @@
         starsContainer.appendChild(star);
       }
     }
-
+    
     // 模拟加载进度
     function simulateLoading() {
       let progress = 0;
-      const progressBar = document.getElementById('loadingProgress');
-      const percentText = document.getElementById('progressPercent');
+      const progressElement = document.getElementById('loadingProgress');
+      const percentElement = document.getElementById('progressPercent');
+      const loadingScreen = document.getElementById('loading-screen');
       
       const interval = setInterval(() => {
-        progress += Math.random() * 10;
-        if (progress >= 100) {
-          progress = 100;
+        progress += Math.random() * 5 + 1;
+        if (progress > 100) progress = 100;
+        
+        progressElement.style.width = `${progress}%`;
+        percentElement.textContent = `${Math.floor(progress)}%`;
+        
+        if (progress === 100) {
           clearInterval(interval);
-          
-          document.body.classList.add('loaded');
           setTimeout(() => {
-            document.getElementById('loading-screen').style.opacity = '0';
+            loadingScreen.style.opacity = '0';
             setTimeout(() => {
-              document.getElementById('loading-screen').remove();
+              loadingScreen.style.display = 'none';
+              document.body.classList.add('loaded');
             }, 800);
           }, 500);
         }
-        
-        progressBar.style.width = `${progress}%`;
-        percentText.textContent = `${Math.floor(progress)}%`;
-      }, 300);
+      }, 100);
     }
-
-    // 幻灯片式文字切换
-    function initMessageSlider() {
-      const messages = document.querySelectorAll('.loading-message');
-      let index = 0;
-      
-      setInterval(() => {
-        messages.forEach(msg => msg.classList.remove('active'));
-        messages[index].classList.add('active');
-        index = (index + 1) % messages.length;
-      }, 3000);
-    }
-
-    // 显示弹窗
-    function showModal() {
+    
+    // 弹窗功能
+    function showModal(event) {
+      event.preventDefault();
       const modal = document.getElementById('configModal');
       modal.style.display = 'flex';
       
       setTimeout(() => {
-        modal.classList.add('show');
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.style.transform = 'scale(1)';
+        modalContent.style.opacity = '1';
       }, 10);
     }
     
-    // 关闭弹窗
     function closeModal() {
       const modal = document.getElementById('configModal');
-      modal.classList.remove('show');
+      const modalContent = modal.querySelector('.modal-content');
+      
+      modalContent.style.transform = 'scale(0)';
+      modalContent.style.opacity = '0';
       
       setTimeout(() => {
         modal.style.display = 'none';
-      }, 500);
+      }, 300);
     }
     
-    // 显示警告框
-    function showAlert() {
-      alert("功能开发中，敬请期待！");
-    }
-
-    // 主题切换功能
-    function initThemeToggle() {
-      const toggleBtn = document.getElementById('themeToggle');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // 初始设置
-      if (prefersDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        toggleBtn.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        toggleBtn.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
+    // 点击弹窗外部关闭
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('configModal');
+      if (event.target === modal) {
+        closeModal();
       }
-      
-      // 按钮点击切换
-      toggleBtn.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        if (currentTheme === 'light') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-          toggleBtn.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-          toggleBtn.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
-        }
-      });
-      
-      // 监听系统主题变化
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if (e.matches) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-          toggleBtn.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-          toggleBtn.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
-        }
-      });
-    }
-
-    // 初始化
-    document.addEventListener('DOMContentLoaded', () => {
-      createStars();
-      initMessageSlider();
-      simulateLoading();
-      initThemeToggle();
-      
-      // 平滑滚动
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          e.preventDefault();
-          document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-          });
-        });
-      });
     });
-  </script>
-</body>
-</html>
+    
+    // 简单的提示框
+    function showAlert() {
+      alert('感谢您的兴趣！该产品目前处于概念阶段，敬请期待正式发布！');
+    }
+    
+    // 平滑滚动导航
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+        
+        // 更新导航栏活动状态
