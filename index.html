@@ -7,16 +7,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* 声明本地自定义字体 - 修正版 */
+    /* 声明本地自定义字体 - 使用相对路径 */
     @font-face {
-      font-family: 'CustomFont';
-      src: url('fonts/WYYDXHNO.woff2') format('woff2'),
-           url('fonts/WYYDXHNO.ttf') format('truetype');
+      font-family: 'TrueTypeOutlines';
+      src: url('./fonts/WYYDXHNO.woff2') format('woff2'),
+           url('./fonts/WYYDXHNO.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
-      font-display: swap;
+      font-display: block;
     }
-
+    
     /* 基础变量定义 */
     :root {
       --bg-color: #0a0c1b;
@@ -33,7 +33,7 @@
       --nav-text-weight: 500;
       --nav-text-size: 0.95rem;
     }
-
+    
     /* 亮色主题 */
     [data-theme="light"] {
       --bg-color: #f5f5f5;
@@ -46,14 +46,8 @@
       --border-color: rgba(0, 119, 204, 0.2);
       --icon-color: #2d3436;
     }
-
-    /* 修复图标显示 */
-    .fa, .fas, .fab {
-      font-family: 'Font Awesome 6 Free' !important;
-      font-weight: 900 !important;
-    }
-
-    /* 星空加载动画 */
+    
+    /* 星空加载动画 - 增加星星密度 */
     #loading-screen {
       position: fixed;
       top: 0;
@@ -66,9 +60,9 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: opacity 1.5s ease-out;
+      transition: opacity 0.8s ease-out; /* 加快淡出速度 */
     }
-
+    
     .stars {
       position: absolute;
       top: 0;
@@ -77,39 +71,40 @@
       height: 100%;
       overflow: hidden;
     }
-
+    
     .star {
       position: absolute;
       background: white;
       border-radius: 50%;
       animation: twinkle var(--duration) infinite ease-in-out;
       opacity: 0;
+      will-change: transform, opacity; /* 优化动画性能 */
     }
-
+    
     @keyframes twinkle {
       0%, 100% { opacity: 0; transform: scale(0.5); }
       50% { opacity: var(--opacity); transform: scale(1); }
     }
-
+    
     .loading-content {
       text-align: center;
       z-index: 1;
       opacity: 0;
       animation: fadeIn 2s forwards 0.5s;
     }
-
+    
     .loading-logo {
       font-size: 3rem;
       font-weight: bold;
       margin-bottom: 1rem;
-      font-family: 'CustomFont', 'Orbitron', sans-serif;
+      font-family: 'TrueTypeOutlines', sans-serif;
       background: linear-gradient(45deg, #4fc3f7, #8b80f9);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       letter-spacing: 2px;
     }
-
+    
     .loading-bar {
       width: 200px;
       height: 4px;
@@ -118,7 +113,7 @@
       margin: 20px auto;
       overflow: hidden;
     }
-
+    
     .loading-progress {
       height: 100%;
       width: 0;
@@ -126,7 +121,7 @@
       border-radius: 2px;
       transition: width 0.3s ease;
     }
-
+    
     /* 幻灯片式文字容器 */
     .loading-messages {
       height: 40px;
@@ -136,7 +131,7 @@
       width: 100%;
       max-width: 400px;
     }
-
+    
     .loading-message {
       position: absolute;
       width: 100%;
@@ -144,47 +139,33 @@
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.5s ease;
-      font-family: 'CustomFont', sans-serif;
+      font-family: 'TrueTypeOutlines', sans-serif;
       font-size: 1rem;
     }
-
+    
     .loading-message.active {
       opacity: 1;
       transform: translateY(0);
     }
-
-    /* 全局字体设置 */
-    body {
-      font-family: 'CustomFont', 'Orbitron', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.6;
-      padding-top: 80px;
+    
+    /* 强制全局使用自定义字体但保留图标 */
+    body, button, input, select, textarea {
+      font-family: 'TrueTypeOutlines', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     }
-
-    /* 特别指定元素的字体 */
+    
+    /* 确保图标不受影响 */
+    .fa, .fas, .far, .fal, .fab {
+      font-family: 'Font Awesome 6 Free' !important;
+    }
+    
+    /* 特别指定 Orbitron 字体的元素 */
     .logo,
     .product-card h3,
     .hero-text h1,
     .hero-text h2 {
-      font-family: 'Orbitron', 'CustomFont', sans-serif;
+      font-family: 'Orbitron', 'TrueTypeOutlines', sans-serif !important;
     }
-
-    /* 页面载入动画 */
-    body {
-      animation: fadeIn 1s ease-in-out;
-      opacity: 0;
-    }
-
-    body.loaded {
-      opacity: 1;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
+    
     /* 基础样式 */
     * {
       margin: 0;
@@ -192,7 +173,15 @@
       box-sizing: border-box;
       transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
-
+    
+    /* 全局字体设置 */
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding-top: 80px;
+    }
+    
     /* 导航栏 */
     .navbar {
       position: fixed;
@@ -212,12 +201,12 @@
       transform: translateY(-20px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
-
+    
     body.loaded .navbar {
       opacity: 1;
       transform: translateY(0);
     }
-
+    
     /* 公司LOGO */
     .logo {
       font-size: 1.8rem;
@@ -226,7 +215,7 @@
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-
+    
     /* 导航菜单 */
     .nav-links {
       display: flex;
@@ -235,7 +224,7 @@
       margin-right: 80px;
       align-items: center;
     }
-
+    
     .nav-links a {
       color: var(--text-color);
       text-decoration: none;
@@ -248,7 +237,7 @@
       text-transform: var(--nav-text-transform);
       transition: all 0.3s ease;
     }
-
+    
     /* 导航下划线动画 */
     .nav-links a::after {
       content: '';
@@ -261,16 +250,16 @@
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
       transform-origin: left center;
     }
-
+    
     .nav-links a:hover::after,
     .nav-links a.active::after {
       width: 100%;
     }
-
+    
     .nav-links a.active {
       color: var(--primary-color);
     }
-
+    
     /* 主题切换按钮 */
     .theme-toggle {
       position: absolute;
@@ -293,11 +282,11 @@
       letter-spacing: 0.5px;
       text-transform: none;
     }
-
+    
     .theme-toggle:hover {
       background: rgba(79, 195, 247, 0.2);
     }
-
+    
     /* 主要内容区域 */
     .section {
       padding: 4rem 2rem;
@@ -307,25 +296,25 @@
       transform: translateY(20px);
       transition: opacity 0.8s ease, transform 0.8s ease;
     }
-
+    
     body.loaded .section {
       opacity: 1;
       transform: translateY(0);
     }
-
+    
     /* 首页标题特效 */
     .hero-text {
       text-align: center;
       padding: 6rem 0;
     }
-
+    
     .hero-text h2 {
       font-size: 2rem;
       margin-bottom: 0.5rem;
       opacity: 0.8;
       letter-spacing: 1px;
     }
-
+    
     .hero-text h1 {
       font-size: 4rem;
       margin-bottom: 1.5rem;
@@ -337,19 +326,19 @@
       line-height: 1.2;
       letter-spacing: 2px;
     }
-
+    
     .hero-text p {
       font-size: 1.5rem;
       opacity: 0.9;
       letter-spacing: 0.5px;
     }
-
+    
     /* 高亮文本 */
     .highlight {
       font-weight: bold;
       color: var(--highlight-color);
     }
-
+    
     /* 产品网格 */
     .product-grid {
       display: grid;
@@ -357,7 +346,7 @@
       gap: 2rem;
       margin-top: 3rem;
     }
-
+    
     /* 产品卡片 */
     .product-card {
       background: var(--card-bg);
@@ -367,12 +356,12 @@
       transition: all 0.3s;
       border: 1px solid var(--border-color);
     }
-
+    
     .product-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 15px 30px rgba(0,0,0,0.2);
     }
-
+    
     .product-card img {
       width: 100%;
       border-radius: 10px;
@@ -381,19 +370,20 @@
       aspect-ratio: 16/9;
       object-fit: cover;
     }
-
+    
+    /* 产品名称 */
     .product-card h3 {
       font-size: 1.8rem;
       margin-bottom: 1rem;
       color: var(--highlight-color);
       letter-spacing: 1px;
     }
-
+    
     .product-card p {
       min-height: 3.6em;
       letter-spacing: 0.3px;
     }
-
+    
     /* 操作按钮 */
     .action-buttons {
       display: flex;
@@ -401,7 +391,7 @@
       margin-top: 2rem;
       flex-wrap: wrap;
     }
-
+    
     .btn {
       padding: 0.8rem 1.5rem;
       border-radius: 30px;
@@ -418,27 +408,27 @@
       text-align: center;
       letter-spacing: 0.5px;
     }
-
+    
     .btn-primary {
       background: var(--primary-color);
       color: var(--bg-color);
     }
-
+    
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(79, 195, 247, 0.4);
     }
-
+    
     .btn-secondary {
       background: transparent;
       color: var(--primary-color);
       border: 2px solid var(--primary-color);
     }
-
+    
     .btn-secondary:hover {
       background: rgba(79, 195, 247, 0.1);
     }
-
+    
     /* 弹窗样式 */
     .modal {
       display: none;
@@ -453,7 +443,7 @@
       align-items: center;
       padding: 2rem;
     }
-
+    
     .modal-content {
       background: var(--card-bg);
       border-radius: 15px;
@@ -469,26 +459,26 @@
       transform: scale(0);
       opacity: 0;
     }
-
+    
     .modal-header {
       padding: 1.5rem 2rem;
       border-bottom: 1px solid var(--border-color);
       position: relative;
     }
-
+    
     .modal-header h3 {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       letter-spacing: 0.5px;
     }
-
+    
     .modal-body {
       padding: 1.5rem 2rem;
       overflow-y: auto;
       flex-grow: 1;
     }
-
+    
     .close-btn {
       position: absolute;
       top: 1rem;
@@ -506,26 +496,26 @@
       justify-content: center;
       border-radius: 50%;
     }
-
+    
     .close-btn:hover {
       background: rgba(255,255,255,0.1);
       color: var(--primary-color);
       transform: rotate(90deg);
     }
-
+    
     /* 配置列表样式 */
     .specs-list {
       list-style: none;
       margin-top: 0.5rem;
     }
-
+    
     .specs-list li {
       margin-bottom: 1rem;
       display: flex;
       align-items: flex-start;
       line-height: 1.6;
     }
-
+    
     .specs-list i {
       margin-right: 1rem;
       color: var(--primary-color);
@@ -534,33 +524,33 @@
       font-size: 1.1rem;
       flex-shrink: 0;
     }
-
+    
     .specs-list strong {
       display: inline-block;
       min-width: 90px;
       margin-right: 0.5rem;
       flex-shrink: 0;
     }
-
+    
     .specs-sublist {
       list-style: none;
       margin-left: 2rem;
       margin-top: 0.5rem;
     }
-
+    
     .specs-sublist li {
       margin-bottom: 0.5rem;
       position: relative;
       padding-left: 1.5rem;
     }
-
+    
     .specs-sublist li::before {
       content: "•";
       color: var(--primary-color);
       position: absolute;
       left: 0;
     }
-
+    
     /* 响应式设计 */
     @media (max-width: 768px) {
       .navbar {
@@ -589,4 +579,413 @@
         transform: none;
         font-size: 0.9rem;
         padding: 0.5rem;
-        z-index:
+        z-index: 1003;
+      }
+      
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero-text h2 {
+        font-size: 1.5rem;
+      }
+      
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .modal-content {
+        max-height: 90vh;
+      }
+      
+      .loading-logo {
+        font-size: 2rem;
+      }
+      
+      .loading-messages {
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 星空加载动画 - 增加星星密度 -->
+  <div id="loading-screen">
+    <div class="stars" id="stars"></div>
+    <div class="loading-content">
+      <div class="loading-logo">UNKNOWN TECH.</div>
+      <div class="loading-bar">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <!-- 幻灯片式文字容器 -->
+      <div class="loading-messages" id="loadingMessages">
+        <div class="loading-message active">正在初始化系统...</div>
+        <div class="loading-message">加载核心模块...</div>
+        <div class="loading-message">准备用户界面...</div>
+        <div class="loading-message">即将完成...</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="logo">UNKNOWN TECH.</div>
+    <div class="nav-links">
+      <a href="#home" class="active">首页</a>
+      <a href="#products">产品</a>
+      <a href="#about">关于</a>
+      <a href="#contact">联系</a>
+    </div>
+    <button class="theme-toggle" id="themeToggle">🌗 自动模式</button>
+  </nav>
+  
+  <!-- 首页 -->
+  <section id="home" class="section">
+    <div class="hero-text">
+      <h2>你好呀，</h2>
+      <h1><span class="highlight">UNKNOWN TECH.</span></h1>
+      <p>反叛青年的杰作</p>
+    </div>
+  </section>
+  
+  <!-- 产品展示 -->
+  <section id="products" class="section">
+    <h2>我们的产品</h2>
+    <div class="product-grid">
+      <!-- 手机产品 -->
+      <div class="product-card">
+        <img src="images/phone.jpg" alt="UNKNOWN MACHINE 01">
+        <h3>UNKNOWN MACHINE 01</h3>
+        <p>高性能星空摄影手机，由瑞芯微RK3688芯片驱动</p>
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="showAlert()">
+            <i class="fas fa-shopping-cart"></i> 拿下它
+          </button>
+          <button class="btn btn-secondary" onclick="showModal(event)">
+            <i class="fas fa-info-circle"></i> 详细配置
+          </button>
+          <button class="btn btn-secondary">
+            <i class="fas fa-book"></i> 了解更多
+          </button>
+        </div>
+      </div>
+      
+      <!-- 操作系统产品 -->
+      <div class="product-card">
+        <img src="images/os.jpg" alt="UNKNOWN OS 1">
+        <h3>UNKNOWN OS 1</h3>
+        <p>强劲高能，直觉美学<br>基于Android 15打造</p>
+        <div class="action-buttons">
+          <button class="btn btn-secondary">
+            <i class="fas fa-book"></i> 了解更多
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 关于我们 -->
+  <section id="about" class="section">
+    <h2>关于 UNKNOWN TECH.</h2>
+    <p>我们专注于打破常规，打造极客喜欢的手机、操作系统和你女神会喜欢的智能穿戴设备。</p>
+  </section>
+  
+  <!-- 联系方式 -->
+  <section id="contact" class="section">
+    <h2>联系我们</h2>
+    <address>
+      <p><i class="fas fa-map-marker-alt"></i> 地址：宇宙银河系太阳系地月系地球亚洲东亚中华人民共和国福建省福州市</p>
+      <p><i class="fas fa-envelope"></i> 邮箱（CEO's）：livealoneandcat@163.com</p>
+    </address>
+  </section>
+  
+  <!-- 配置弹窗 -->
+  <div id="configModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-microchip"></i> UNKNOWN MACHINE 01 详细配置</h3>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <ul class="specs-list">
+          <li>
+            <i class="fas fa-microchip"></i>
+            <strong>处理器：</strong>瑞芯微RK3688 八核 集成16TOPS算力的NPU
+          </li>
+          <li>
+            <i class="fas fa-memory"></i>
+            <strong>内存：</strong>32GB LPDDR5
+          </li>
+          <li>
+            <i class="fas fa-hdd"></i>
+            <strong>存储：</strong>2TB UFS 4.0疾速闪存
+          </li>
+          <li>
+            <i class="fas fa-tv"></i>
+            <strong>屏幕：</strong>
+            <ul class="specs-sublist">
+              <li>6.77寸 2K LTPO AMOLED 显示屏</li>
+              <li>支持1Hz-120Hz刷新率自动切换，亦可锁定120FPS</li>
+              <li>真全面屏，无打孔，非屏下 | Panda Glass面板</li>
+            </ul>
+          </li>
+          <li>
+            <i class="fas fa-camera"></i>
+            <strong>影像：</strong>
+            <ul class="specs-sublist">
+              <li>主摄: 64MP 1英寸大底</li>
+              <li>超广角: 48MP 135°广阔视角</li>
+              <li>长焦: 64MP 25x光学变焦</li>
+              <li>升降式前摄: 32MP</li>
+              <li>4K 60FPS / 4K 30FPS HDR视频录制</li>
+            </ul>
+          </li>
+          <li>
+            <i class="fas fa-bolt"></i>
+            <strong>电池：</strong>
+            <ul class="specs-sublist">
+              <li>7500mAh Li-ion蓄电池</li>
+              <li>50W有线快充</li>
+              <li>15W无线快充</li>
+            </ul>
+          </li>
+          <li>
+            <i class="fas fa-wifi"></i>
+            <strong>连接性：</strong>
+            <ul class="specs-sublist">
+              <li>5G NR(SA/NSA)</li>
+              <li>支持Wi-Fi 6</li>
+              <li>蓝牙5.3 (支持LDAC）</li>
+              <li>背部NFC线圈</li>
+              <li>Type-C接口，支持USB 3.0</li>
+            </ul>
+          </li>
+          <li>
+            <i class="fas fa-thermometer-half"></i>
+            <strong>散热系统：</strong>3*离心风扇(约10000RPM) + 2*半导体制冷片 + 20000mm²大面积VC
+          </li>
+          <li>
+            <i class="fas fa-fingerprint"></i>
+            <strong>生物认证：</strong>屏下指纹 | 升降2D人脸识别
+          </li>
+          <li>
+            <i class="fas fa-volume-up"></i>
+            <strong>音频：</strong>立体声双扬声器 | 3.5mm耳机孔
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 创建星空背景 - 增加星星密度到300颗
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starsCount = 300; // 从150增加到300
+      
+      for (let i = 0; i < starsCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // 随机大小 (1-3px)
+        const size = Math.random() * 2 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // 随机位置
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // 随机闪烁动画参数
+        const duration = `${Math.random() * 3 + 2}s`;
+        const delay = `${Math.random() * 5}s`;
+        const opacity = Math.random() * 0.8 + 0.2;
+        
+        star.style.setProperty('--duration', duration);
+        star.style.setProperty('--opacity', opacity);
+        star.style.animationDelay = delay;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+    
+    // 幻灯片式文字切换
+    function initMessageSlider() {
+      const messages = document.querySelectorAll('.loading-message');
+      let currentIndex = 0;
+      
+      function showNextMessage() {
+        messages[currentIndex].classList.remove('active');
+        currentIndex = (currentIndex + 1) % messages.length;
+        messages[currentIndex].classList.add('active');
+      }
+      
+      setInterval(showNextMessage, 3000);
+    }
+    
+    // 模拟加载进度
+    function simulateLoading() {
+      const progressBar = document.getElementById('loadingProgress');
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress > 100) progress = 100;
+        progressBar.style.width = `${progress}%`;
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            document.getElementById('loading-screen').style.opacity = '0';
+            setTimeout(() => {
+              document.getElementById('loading-screen').style.display = 'none';
+              document.body.classList.add('loaded');
+            }, 800); // 缩短到800ms
+          }, 500);
+        }
+      }, 200);
+    }
+    
+    // 页面加载完成后初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      createStars();
+      initMessageSlider();
+      simulateLoading();
+      
+      const navLinks = document.querySelectorAll('.nav-links a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          navLinks.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+    });
+    
+    // 滚动时高亮对应菜单项
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.section');
+      const navLinks = document.querySelectorAll('.nav-links a');
+      
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+      
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+    
+    // 主题切换功能
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const navbar = document.querySelector('.navbar');
+    
+    // 检测系统主题偏好
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // 初始化主题为自动模式
+    let currentTheme = localStorage.getItem('theme') || 'auto';
+    applyTheme(currentTheme);
+    
+    // 主题切换按钮点击事件
+    themeToggle.addEventListener('click', () => {
+      if (currentTheme === 'auto') {
+        currentTheme = 'light';
+      } else if (currentTheme === 'light') {
+        currentTheme = 'dark';
+      } else {
+        currentTheme = 'auto';
+      }
+      applyTheme(currentTheme);
+      localStorage.setItem('theme', currentTheme);
+    });
+    
+    // 应用主题函数
+    function applyTheme(theme) {
+      if (theme === 'auto') {
+        if (systemPrefersDark) {
+          setDarkTheme();
+        } else {
+          setLightTheme();
+        }
+        themeToggle.innerHTML = '<i class="fas fa-adjust"></i> 自动模式';
+      } else if (theme === 'light') {
+        setLightTheme();
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
+      } else {
+        setDarkTheme();
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
+      }
+    }
+    
+    function setLightTheme() {
+      html.setAttribute('data-theme', 'light');
+      navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+      navbar.style.color = '#2d3436';
+    }
+    
+    function setDarkTheme() {
+      html.setAttribute('data-theme', 'dark');
+      navbar.style.background = 'rgba(10, 12, 27, 0.98)';
+      navbar.style.color = '#ffffff';
+    }
+    
+    // 显示提示信息
+    function showAlert() {
+      alert("功能开发中，敬请期待！");
+    }
+    
+    // 显示弹窗
+    function showModal(event) {
+      const modal = document.getElementById('configModal');
+      const modalContent = modal.querySelector('.modal-content');
+      const buttonRect = event.currentTarget.getBoundingClientRect();
+      const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+      const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+      
+      modalContent.style.transformOrigin = `${buttonCenterX}px ${buttonCenterY}px`;
+      modal.style.display = 'flex';
+      modalContent.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s';
+      modalContent.style.transform = 'scale(0)';
+      modalContent.style.opacity = '0';
+      
+      void modalContent.offsetWidth;
+      
+      modalContent.style.transform = 'scale(1)';
+      modalContent.style.opacity = '1';
+    }
+    
+    // 关闭弹窗
+    function closeModal() {
+      const modal = document.getElementById('configModal');
+      const modalContent = modal.querySelector('.modal-content');
+      
+      modalContent.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s';
+      modalContent.style.transform = 'scale(0)';
+      modalContent.style.opacity = '0';
+      modal.style.transition = 'background 0.3s';
+      modal.style.background = 'rgba(0,0,0,0)';
+      
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.background = 'rgba(0,0,0,0.8)';
+      }, 300);
+    }
+  </script>
+</body>
+</html>
