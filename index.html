@@ -8,12 +8,18 @@
   <style>
     /* 声明本地自定义字体 */
     @font-face {
-      font-family: 'WYYDXHNO';
+      font-family: '我有点喜欢你喔';
       src: url('./fonts/WYYDXHNO.woff2') format('woff2'),
            url('./fonts/WYYDXHNO.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
       font-display: block;
+    }
+    
+    /* 新增的关键帧动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     
     /* 基础变量定义 */
@@ -856,3 +862,38 @@
         });
         
         // 更新导航栏活动状态
+        document.querySelectorAll('.nav-links a').forEach(link => {
+          link.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+    
+    // 滚动时更新导航栏活动状态
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY;
+      
+      document.querySelectorAll('section').forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${sectionId}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+    
+    // 页面加载完成后初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      createStars();
+      simulateLoading();
+    });
+  </script>
+</body>
+</html>
